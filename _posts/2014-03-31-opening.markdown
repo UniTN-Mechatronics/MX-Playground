@@ -1,0 +1,8 @@
+---
+layout: architect_post
+title:  "Site opening!"
+date:   2014-03-31 15:55:06
+categories: site update
+---
+
+Website is opening today. Expect new entries in the following days. For now, a first example has been added to the repository.

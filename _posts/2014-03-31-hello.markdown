@@ -1,8 +1,0 @@
----
-layout: architect_post
-title:  "Hello!"
-date:   2014-03-31 15:55:06
-categories: jekyll update
----
-
-Test post.

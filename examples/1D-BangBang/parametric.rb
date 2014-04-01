@@ -16,6 +16,7 @@
  #--------------------------------------------------------------------------#
 
 require 'mechatronix'
+require 'colorize' # On windows, you need ANSICON installed!
 require './case_A/data/OneDBangBang_Data.rb'
 
 # Set the model name
@@ -40,11 +41,11 @@ pa.solver = ocp
 
 # Define the exploration domain: it must be a Hash with the name of the
 # parameters to be explored as keys, and Arrays of values as values.
-pa.parameters = {:Fmax => [0.9, 1, 1.1], :L => [0.9, 1.0, 1.5]}
+pa.parameters = {:Fmax => [0.9, 1, 1.1], :L => [0.5, 1.0, 5.0]}
 
 # Give some feedback
-puts "STARTING PARAMETRIC ANALYSIS on parameters #{pa.parameters.keys}"
-puts "Parameters table:"
+puts "STARTING PARAMETRIC ANALYSIS on parameters #{pa.parameters.keys}".green
+puts "Parameters table:".yellow
 p pa.parameters.keys
 pa.combinations.each {|combo| p combo }
 puts 
@@ -53,24 +54,24 @@ puts
 # the given block on it
 i = 0 # for indexing output files
 Dir.mkdir("data") unless Dir.exist? "data"
-puts "STARTING CALCULATIONS"
+puts "STARTING CALCULATIONS".green
 pa.each do |solver, combination|
   # Description to be added in the comment header of the output file
-  desc =  "alpha = #{solver.data.Parameters[:Fmax]}, beta = #{solver.data.Parameters[:L]}"
+  desc =  sprintf("alpha = %5.2f, beta = %5.2f", solver.data.Parameters[:Fmax], solver.data.Parameters[:L])
   # Give some feedback
-  print "Solving case for #{desc}"
+  print "Solving case for #{desc}... "
   # Calculate the solution
   solver.solve
   unless solver.ocp_solution[:Error] then
     # Non-convergence is not an error!
     solver.write_ocp_solution("data/#{problem_name}_OCP_result_#{i}.txt", desc)
-    puts " OK"
+    puts ocp.ocp_solution[:converged] ? " OK".green : " Not converged".yellow
   else
-    puts " Error"
+    puts " Error".red
   end
   i += 1 # Increment the output file index
 end
 
-figlet "All done."
+puts "All done.".figlet.green
 
 # EOF

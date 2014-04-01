@@ -41,7 +41,9 @@ pa.solver = ocp
 
 # Define the exploration domain: it must be a Hash with the name of the
 # parameters to be explored as keys, and Arrays of values as values.
-pa.parameters = {:Fmax => [0.9, 1, 1.1], :L => [0.5, 1.0, 5.0]}
+lengths = []
+1.step(10,0.5) {|n| lengths << n}
+pa.parameters = {:Fmax => [0.9, 1, 1.1], :L => lengths}
 
 # Give some feedback
 puts "STARTING PARAMETRIC ANALYSIS on parameters #{pa.parameters.keys}".green
@@ -57,9 +59,9 @@ Dir.mkdir("data") unless Dir.exist? "data"
 puts "STARTING CALCULATIONS".green
 pa.each do |solver, combination|
   # Description to be added in the comment header of the output file
-  desc =  sprintf("alpha = %5.2f, beta = %5.2f", solver.data.Parameters[:Fmax], solver.data.Parameters[:L])
+  desc =  sprintf("Fmax = %5.2f, L = %5.2f", solver.data.Parameters[:Fmax], solver.data.Parameters[:L])
   # Give some feedback
-  print "Solving case for #{desc}... "
+  print "Case #{i}: with #{desc}... "
   # Calculate the solution
   solver.solve
   unless solver.ocp_solution[:Error] then

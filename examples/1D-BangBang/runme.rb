@@ -18,6 +18,10 @@
 require 'mechatronix'
 require './case_A/data/OneDBangBang_Data.rb'
 
+# Make a copy of the data structure to a local variable
+# remember to call the .dup method in order to make areal copy!
+data = Mechatronix.content.dup
+
 # Set the model name
 problem_name = "OneDBangBang"
 
@@ -28,8 +32,19 @@ if ! File.exist?("case_A/lib/lib#{problem_name}.dylib") || ARGV[0] == '-f' then
   MXBuilder.new(problem_name).build
 end
 
-# Link the library
-ocp = Mechatronix::OCPSolver.new "case_A/lib/lib#{problem_name}.dylib"
+# Create a new solver instance, linking to the compiled library and passing the 
+# local data object
+ocp = Mechatronix::OCPSolver.new("case_A/lib/lib#{problem_name}.dylib", data)
+
+# Now the problem data are available in ocp.data and can be edited directly
+ocp.data.InfoLevel = 1
+
+# Alternatively, you could make different complete copies od the whole data
+# structure and then assign it back:
+data2 = Mechatronix.content.dup
+data2.InfoLevel = 2
+ocp.data = data2
+
 
 # Setup the solver
 ocp.setup
